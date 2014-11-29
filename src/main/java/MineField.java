@@ -3,31 +3,56 @@ import com.google.common.collect.Lists;
 import java.util.List;
 
 public class MineField {
+    private static class Square {
+        public boolean isMine = false;
+        public int adjacencyCount = 0;
 
-    private List<String> locations;
+        public String getChar() {
+            if (isMine) {
+                return "*";
+            }
+            if (adjacencyCount == 0) {
+                return ".";
+            }
+            return Integer.toString(adjacencyCount);
+        }
+    }
+
+    private List<Square> locations = Lists.newArrayList();
+
+    public MineField(){
+        for (int i = 0; i < 12; i++) {
+            locations.add(new Square());
+        }
+    }
 
     public void findMines(int mineLoc) {
-        locations = createLocs();
-        setMines(mineLoc);
+        setMine(mineLoc);
         printMineField(locations);
     }
 
-    private List<String> createLocs() {
-        List<String> locs = Lists.newArrayList();
-        for (int i = 0; i < 12; i++) {
-            locs.add(".");
+    public String getSquare(int i) {
+        return locations.get(i).getChar();
+    }
+
+    public void setMine(int mineLoc) {
+        Square square = locations.get(mineLoc);
+        square.isMine = true;
+        addHints(mineLoc);
+    }
+
+    private void addHints(int mineLoc) {
+        if ((mineLoc + 1) % 4 != 0) {
+            locations.get(mineLoc + 1).adjacencyCount++;
         }
-        return locs;
+        if((mineLoc) %4 != 0 && mineLoc>0){
+            locations.get(mineLoc - 1).adjacencyCount++;
+        }
     }
 
-    private void setMines(int mineLoc) {
-        locations.set(mineLoc - 1, "*");
+    private void printMineField(List<Square> locs) {
+        System.out.println(locs.get(0).getChar() + locs.get(1).getChar() +  locs.get(2).getChar() +  locs.get(3).getChar());
+        System.out.println(locs.get(4).getChar() + locs.get(5).getChar() +  locs.get(6).getChar() +  locs.get(7).getChar());
+        System.out.println(locs.get(8).getChar() + locs.get(9).getChar() + locs.get(10).getChar() + locs.get(11).getChar());
     }
-
-    private void printMineField(List<String> locs) {
-        System.out.println(locs.get(0) + locs.get(1) + locs.get(2) + locs.get(3));
-        System.out.println(locs.get(4) + locs.get(5) + locs.get(6) + locs.get(7));
-        System.out.println(locs.get(8) + locs.get(9) + locs.get(10) + locs.get(11));
-    }
-
 }
